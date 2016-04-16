@@ -1,3 +1,13 @@
 baseurl = "http://quent.al/"
 languageCode = "en-us"
 title = "Guilherme Quental"
+theme = "beautifulhugo"
+
+[Params]
+    logo = "images/logo.jpeg"
+
+[Author]
+    name = "Guilherme Quental"
+    emial = "guilherme@quent.al"
+    facebook = "gquental"
+    github = "gquental"
