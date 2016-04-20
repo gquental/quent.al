@@ -27,9 +27,9 @@ path of the URL, with the html extension. If the content isn't found, it will th
 So, for example, the url ```http://localhost:4502/content/testing.html```, it will first try to find in the repository for
 ```/content/testing.html``` and, as this node doesn't exist, it will fallback to ```/content/testing```.
 
-*__P.S.: This was part of the URL resolving is described like this in the official documentation, but if you try to create
+*P.S.: This part of the URL resolving is described like this in the official documentation, but if you try to create
 a page node with the name ```/content/testing.html``` directly, the resolve doesn't match it, I'm trying to discover if
-there is any detail that perhaps I've missed, but I will update this post with this detail.__*
+there is any detail that perhaps I've missed, but I will update this post with this detail.*
 
 ### Finding the right script
 
