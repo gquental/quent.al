@@ -10,14 +10,14 @@ Sling URL Resolve
 ===
 
 When we are at the web, acessing pages and content, the URL is the definitive resource which inform what indeed
-we're consuming.
+we're consuming.  
 In the programming world, usually when we're using languages and technologies such as PHP, Ruby, NodeJS, the URL
 points out to a resource, but in the Sling world, this is different.
 
 ## Content as the protagonist
 
 As commented previously, in the Sling world, differently from the main technologies that we see out there, the content
-is the main entry point of the application.
+is the main entry point of the application.  
 When the framework is resolving the URL, it will try to match the content that is contained within the CRX Repository and,
 just when the content is found, it will fetch it's properties in order to discover which script will be rendered.
 
@@ -34,7 +34,7 @@ there is any detail that perhaps I've missed, but I will update this post with t
 ### Finding the right script
 
 When the content is finally found, the next step in the evaluation order of the resolver is to find the right script
-to render the content of the resource in for the final user.
+to render the content of the resource in for the final user.  
 In order to do so, the resolver will fetch the node from the repository and inspect it's properties trying to find one
 of those properties, in order:
 
