@@ -14,3 +14,7 @@ theme = "beautifulhugo"
 
 [permalinks]
     page = "/:title/"
+    
+[blackfriday]
+   plainIDAnchors = true
+   hrefTargetBlank = true
