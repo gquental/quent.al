@@ -2,6 +2,8 @@ baseurl = "http://quent.al/"
 languageCode = "en-us"
 title = "Quent.al"
 theme = "beautifulhugo"
+disqusShortname = "quental"
+googleAnalytics = "UA-76744640-1"
 
 [Params]
     logo = "images/logo.jpg"
