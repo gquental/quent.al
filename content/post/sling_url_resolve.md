@@ -153,4 +153,105 @@ For the next steps, you can only skip clicking next until the OK button is avail
 After this process is accomplished, we finally have our application created and now we can create our **first AEM page**
 (congratz ;D).
  
- 
+### Our window to the world: The first page
+
+Now that we have built all the needed parts for our tests, we'll finally create our first page, but, in oder to do so, the first
+thing that we should do is to access the *siteadmin* area, by entering this address ```http://localhost:4502/siteadmin```.  
+When you enter in this part, you should be able to see a screen like this one:
+
+![Siteadmin](/posts/sling_url_resolve/siteadmin.png)
+
+In this area, you'll see all the created pages and also will be able to create new ones, basing it in the templates that
+we've created previously.  
+So, our first step is to create the page based in the template that we created. To do so, please click in the **New...**
+button and choose **New Page...**, as in the screenshot.
+
+![Siteadmin: New Page](/posts/sling_url_resolve/new_page.png)
+
+When you finally clicked in this button, a dialog will be prompted for you where you will be able to enter the name of the 
+node that will be within the CRX repository, the title of the page itself and select the template that it will be based.
+
+![Siteadmin: New Page dialog](/posts/sling_url_resolve/creating_page.png)
+
+In the case of the screenshot above, we will call our page Testing, naming it's node all lowercase. As you can see, as we're
+at the root of the content, the ```/content``` location, as we created previously our template to be available for this 
+path as well, it appears in the list of templates to be selected.  
+After we created it and try to find the node of the Page within the CRX Repository, we will be able to notice that all
+the properties defined in the template are also copied to the node of the page that was just created.
+
+![Page properties](/posts/sling_url_resolve/page_properties.png)
+
+### Resolver order
+
+As commented before, there is some aspects of the URL that influence directly in the script resolver, and, to be true,
+there is an order of preference that the resolver takes in consideration when trying to find the best match for the
+resource content.  
+In our component, we can, for example, have more than one **.jsp** script, so, by doing so, we will let our resolver be 
+able to find the best match along a wide variety of options.  
+
+So, in the first step for this, we should create some new **.jsp** files within our previously created component, so we
+can then check for ourselves in practice what is the resolver order that AEM will take.  
+We need to create some **files** in the following folder ```/apps/blog1/components/page/slingtest```. Use as example the
+```slingtest.jsp``` that was created automatically when we created the component in the first place. We will click two times
+in each file so we can change the content of the file to it's name. So for example, if we created the file ```test.jsp```,
+in it's contents it would have ```test.jsp``` as well.
+
+For this new part we should create this list of files.
+
+- GET.jsp
+- selector2.jsp
+- selector1.jsp
+- selector1/selector2.jsp
+
+Don't forget to edit the contents of each file in order to it have as the content it's name. Take a look in the screenshoot
+below.
+
+![JSP Files](/posts/sling_url_resolve/jsp_files.png)
+
+#### Testing our execution order
+
+Now that we've created all the JSP files, the page and everything else, we can finally test in practice, when we access
+the URL of our page, which indeed will be the scripted that will be rendered.  
+So, let's try to access the page that we just created ```http://localhost:4502/content/testing.html```.
+
+What was the page that rendered for you? Perhaps you're wondering why any of the page that we've created was called and
+yes, the script that was created by default when the component was created at the first time, the ```slingtest.jsp```.
+
+The reason behind that is the execution order, as there wasn't any specific file that match our URL, one of the last files
+that the resolver tries to look for before triggering an error, is the jsp with the same name of the component, in this case
+**slingtest**. If we deleted this file, there is just one more fallback before triggering an error, which is the 
+**[HTTP_METHOD_NAME].jsp**. In our case ```GET.jsp```.  
+If you try to delete the **slingtest.jsp** file, you will be able to see that the file that now will be called to render 
+the content of the resource will be the ```GET.jsp```. Please, do so.
+
+And if we deleted the ```GET.jsp``` as well, what would happen? In fact, there isn't any apparent error, we would just see
+a blank screen. But now you know, that if anytime you experience just a blank screen, can be a problem of your script resolver
+not finding anything to render.
+
+##### Using the selectors
+
+One good key point of AEM and Sling, is the possibility to tweak our request by adding selectors in our URL. Those selectors
+have a priority when the script resolver is trying to find the script.  
+For example, if we just had one selector in our URL, like this: ```http://localhost:4502/testing.selector2.html```, the 
+script that would be called instead would be the ```selector2.jsp```.
+
+And if we had more than one selector, like this URL: ```http://localhost:4502/testing.selector1.selector2.html```. What
+would happen?  
+Remember that we've created a jsp within a folder? In the execution order, if there is a folder with the name of the **first**
+(and only the first) selector, it will enter in this folder. So you're right if you guessed that the one that would be called
+was ```selector1/selector2.jsp```. You might be wondering that if we didn't had this folder, what would be the priority
+of render, the selector1 or selector2? Let's try to delete the selector1 folder and discover.
+
+If you guessed selector1, you were right, the first selector will always have the priority.
+
+## Summing it up
+
+Basically, that was the things that I've wanted to bring up for everyone, I really wish you could make usage of anything.  
+If there is anything that I can help you out, please feel free to contact me via mail or any other social network! You can
+find my contacts in the footer of this blog.
+
+This is my first post, so sorry for any mistakes and please, warn me if there is anything that you think I could improve.  
+Expect to see a lot of new content coming up, as I hope to use this also as a new way to learn, trying to write and explain
+what I've been studying.
+
+Thanks for holding up till here. ;)
