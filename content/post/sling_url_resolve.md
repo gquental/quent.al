@@ -9,7 +9,7 @@ title = "Sling URL Resolve"
 When we are at the web, acessing pages and content, the URL is the definitive resource which inform what indeed
 we're consuming.  
 In the programming world, usually when we're using languages and technologies such as PHP, Ruby, NodeJS, the URL
-points out to a resource, but in the Sling world, this is different.
+points out to a script, but in the Sling world, this is different.
 
 ## Content as the protagonist
 
