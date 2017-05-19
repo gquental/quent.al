@@ -4,6 +4,7 @@ title = "Quent.al"
 theme = "beautifulhugo"
 disqusShortname = "quental"
 googleAnalytics = "UA-76744640-1"
+publishDir = "docs"
 
 [Params]
     logo = "images/logo.jpg"
