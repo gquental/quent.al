@@ -2,14 +2,30 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://quent.al/post/sling_url_resolve/</loc>
+    <lastmod>2016-04-19T22:10:39-03:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://quent.al/categories/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://quent.al/post/</loc>
+    <lastmod>2016-04-19T22:10:39-03:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
     <loc>http://quent.al/</loc>
     <lastmod>2016-04-19T22:10:39-03:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://quent.al/post/sling_url_resolve/</loc>
-    <lastmod>2016-04-19T22:10:39-03:00</lastmod>
+    <loc>http://quent.al/tags/</loc>
+    <priority>0</priority>
   </url>
   
 </urlset>
