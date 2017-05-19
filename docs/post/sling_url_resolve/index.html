@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <title>Sling URL Resolve</title>
+
+  <meta name="author" content="Guilherme Quental" />
+  
+  
+
+  <meta name="generator" content="Hugo 0.15" />
+
+  <link rel="alternate" href="http://quent.al/index.xml" type="application/rss+xml" title="Quent.al">
+
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" />
+  <link rel="stylesheet" href="http://quent.al/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="http://quent.al/css/main.css" />
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" />
+  <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" />
+  <link rel="stylesheet" href="http://quent.al/css/pygment_highlights.css" />
+  
+  
+  <meta property="og:title" content="Sling URL Resolve" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="/" />
+  <meta property="og:image" content="images/logo.jpg" />
+  
+</head>
+
+
+  <body>
+
+    <nav class="navbar navbar-default navbar-fixed-top navbar-custom">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="http://quent.al/">Quent.al</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="main-navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+      </ul>
+    </div>
+
+	<div class="avatar-container">
+	  <div class="avatar-img-border">
+      
+          <a title="Quent.al" href="http://quent.al/">
+              <img class="avatar-img" src="http://quent.al/images/logo.jpg" alt="Quent.al" />
+          </a>
+      
+	  </div>
+	</div>
+
+  </div>
+</nav>
+
+
+    <div role="main" class="container main-content">
+
+      
+        
+
+
+
+
+
+<header class="header-section ">
+
+<div class="intro-header no-img">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <div class="post-heading">
+          <h1>Sling URL Resolve</h1>
+      
+      
+      
+      <span class="post-meta">Posted on April 19, 2016</span>
+      
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</header>
+
+
+
+
+<div class="container">
+  <div class="row">
+    <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+      <article role="main" class="blog-post">
+          
+
+<p>When we are at the web, acessing pages and content, the URL is the definitive resource which inform what indeed
+we&rsquo;re consuming.<br />
+In the programming world, usually when we&rsquo;re using languages and technologies such as PHP, Ruby, NodeJS, the URL
+points out to a script, but in the Sling world, this is different.</p>
+
+<h2 id="content-as-the-protagonist">Content as the protagonist</h2>
+
+<p>As commented previously, in the Sling world, differently from the main technologies that we see out there, the content
+is the main entry point of the application.<br />
+When the framework is resolving the URL, it will try to match the content that is contained within the CRX Repository and,
+just when the content is found, it will fetch it&rsquo;s properties in order to discover which script will be rendered.</p>
+
+<p>The resolver will try to match the content in the URL by trying to find in the content repository by the full
+path of the URL without the exception. If the content isn&rsquo;t found, it will then trigger the error handler script.</p>
+
+<p>So, for example, the url <code>http://localhost:4502/content/testing.html</code>, it try to find in the repository for
+<code>/content/testing</code>.</p>
+
+<h3 id="finding-the-right-script">Finding the right script</h3>
+
+<p>When the content is finally found, the next step in the evaluation order of the resolver is to find the right script
+to render the content of the resource in for the final user.<br />
+In order to do so, the resolver will fetch the node from the repository and inspect it&rsquo;s properties trying to find one
+of those properties, in order:</p>
+
+<ul>
+<li>sling:resourceType</li>
+<li>sling:resourceSuperType</li>
+<li>jcr:primaryType</li>
+</ul>
+
+<p>When the first is not found, it will fallback to the second and so on.</p>
+
+<p>With the property found, it will parse it&rsquo;s value, for example <code>blog/test</code> and will try to find for this script in
+two places, also in the same fallback order as the previous list:</p>
+
+<ul>
+<li>/apps</li>
+<li>/libs</li>
+</ul>
+
+<h2 id="nothing-better-than-examples">Nothing better than examples</h2>
+
+<h3 id="script-resolver">Script resolver</h3>
+
+<p>When the resolver is trying to find the script in one of the folders commented above,  it will take 3 things in
+consideration  in order to find the best script match.<br />
+It will analyze those resources of the URL:</p>
+
+<ul>
+<li>The request method <em>(GET/HEAD/POST&hellip; etc&hellip;)</em></li>
+<li>The selectors <code>[URL]/testing.[selector1.selector2].html</code></li>
+<li>The extension itself in the URL</li>
+</ul>
+
+<p>In order to try to show how this is handled by AEM, I believe that the best way to do so is getting our hands dirty and
+went straight to the code. So, in the next sections, let&rsquo;s see how to create the application environment need in order
+to do so.</p>
+
+<h3 id="creating-our-application-architecture">Creating our application architecture</h3>
+
+<p>For us being able to assess this functionality of the Sling script resolver, we would need basically 3 things.</p>
+
+<ul>
+<li>A component that will be used to render our page content</li>
+<li>A template which our page will be based</li>
+<li>The page itself within our CRX content repository</li>
+</ul>
+
+<p>So the first part is to create the structure of nodes that will hold our code. Following the Adobe best practices, we
+should create our application folder within the <code>/apps</code>. Let&rsquo;s call our application <strong>blog1</strong>.</p>
+
+<p>So, in the first step, we should create folders using the <strong>CRXDE Lite IDE</strong> (that&rsquo;s bundled in every AEM installation)
+in order to match the structure presented below.</p>
+
+<pre><code>/apps
+    /blog1
+        /components
+            /page
+        /templates
+</code></pre>
+
+<p>As our simple application will only need a Page Component and a template, we don&rsquo;t need to create the full structure
+suggest by Adobe, which you can find in this <a href="http://www.aemcq5tutorials.com/tutorials/adobe-aem-and-cq5-best-practices/" target="_blank">link</a>.</p>
+
+<p>So, first we need to enter in the LITE IDE by entering in the url <code>http://localhost:4502/crx/de</code>. When the page is
+loaded, you should be able to see something like this:</p>
+
+<p><img src="/posts/sling_url_resolve/crxde.png" alt="CRXDE Lite" /></p>
+
+<p>With that open, we should then start creating our folder structure. In order to create a folder in this application,
+you can click with right button in the <code>/apps</code> folder and click in create new folder, as in the screenshot down below.</p>
+
+<p><img src="/posts/sling_url_resolve/create_folder.png" alt="Creating a folder" /></p>
+
+<p>After all the folders are created, you should have a structure like this one:</p>
+
+<p><img src="/posts/sling_url_resolve/folder_structure.png" alt="Folder structure" /></p>
+
+<p>Now, with those folder totally ready, we can on to our next steps, which the first will be the creation of our component.</p>
+
+<h4 id="creating-our-first-component">Creating our first component</h4>
+
+<p>Our component is the responsible by rendering what will be shown for our user, based in the content that is found by the
+resolution of the URL. As commented previously, this component is found by the resolver by figuring out what is the
+resource type of the content.<br />
+In the Lite IDE, we have all we need in order to easily create a component, fact that we can accomplish by using the
+create menu as we used before for the creation of our folder structure.</p>
+
+<p><img src="/posts/sling_url_resolve/create_component.png" alt="Create component" /></p>
+
+<p>When this button is clicked, it will be prompted for us a dialog area where we&rsquo;ll be able to fill the information which
+describes our components. For now, the only info that we should fill is the Label (name of the node within the CRX repository)
+and the Title. Let&rsquo;s call our component <strong>slingtest</strong>.</p>
+
+<p><img src="/posts/sling_url_resolve/component_config.png" alt="Component config" /></p>
+
+<p>For now, you should click in the next button in the dialog until the OK button is available, as it will not be needed to
+configure the other details of the component for this tutorial, perhaps we can go deep in the component configuration in
+another post.</p>
+
+<p>With that, our component is successfully created and we can go on to the creation of our template.</p>
+
+<h4 id="creating-the-template">Creating the template</h4>
+
+<p>The template is one major part of any AEM application, as it is what will drive the creation of all the content that
+will be presented for our clients. Any page is based in the templates in order to have it&rsquo;s default properties, such
+as the resource type, that will define which component will render the resource content itself.<br />
+In order to create a template, the process is similar to the creation of a component, we should just select the template
+button instead.</p>
+
+<p><img src="/posts/sling_url_resolve/create_template.png" alt="Create template" /></p>
+
+<p>As we&rsquo;ve already seen in the component creation, it will be presented a similar dialog where will be able to configure
+our template. In this dialog, we will fill only 3 properties, the name and the title, as before, and also the
+<strong>Resource Type</strong>. This part is very important, because it&rsquo;s the part which will make our template tell all the pages based
+on it, which component it should direct to render the content.<br />
+I&rsquo;ve commented previously that the Script resolver will try to find the component in two folders, the <code>/apps</code> and in the
+<code>/libs</code>, so that&rsquo;s why in the Resource Type we just fill with <code>blog1/components/page/slingtest</code>, because the
+resolver will automatically concatenate the resource type to the default search folders.</p>
+
+<p><img src="/posts/sling_url_resolve/configure_template_1.png" alt="Configure Template: part 1" /></p>
+
+<p>Differently from the creation of components, in the next dialog there will be a field which will need our attention,
+that is the <strong>Allowed Paths</strong>. This field is important because it defines where in the content repository tree our
+page can be created. It accepts a regular exception, as we put <code>/content(/.*)?</code>, where we said that we can create the
+page anywhere in the tree that starts in the <code>/content</code> folder, that is the root directory of the all the sites
+within AEM.</p>
+
+<p><img src="/posts/sling_url_resolve/configure_template_2.png" alt="Configure Template: part 2" /></p>
+
+<p>For the next steps, you can only skip clicking next until the OK button is available.</p>
+
+<p>After this process is accomplished, we finally have our application created and now we can create our <strong>first AEM page</strong>
+(congratz ;D).</p>
+
+<h3 id="our-window-to-the-world-the-first-page">Our window to the world: The first page</h3>
+
+<p>Now that we have built all the needed parts for our tests, we&rsquo;ll finally create our first page, but, in oder to do so, the first
+thing that we should do is to access the <em>siteadmin</em> area, by entering this address <code>http://localhost:4502/siteadmin</code>.<br />
+When you enter in this part, you should be able to see a screen like this one:</p>
+
+<p><img src="/posts/sling_url_resolve/siteadmin.png" alt="Siteadmin" /></p>
+
+<p>In this area, you&rsquo;ll see all the created pages and also will be able to create new ones, basing it in the templates that
+we&rsquo;ve created previously.<br />
+So, our first step is to create the page based in the template that we created. To do so, please click in the <strong>New&hellip;</strong>
+button and choose <strong>New Page&hellip;</strong>, as in the screenshot.</p>
+
+<p><img src="/posts/sling_url_resolve/new_page.png" alt="Siteadmin: New Page" /></p>
+
+<p>When you finally clicked in this button, a dialog will be prompted for you where you will be able to enter the name of the
+node that will be within the CRX repository, the title of the page itself and select the template that it will be based.</p>
+
+<p><img src="/posts/sling_url_resolve/creating_page.png" alt="Siteadmin: New Page dialog" /></p>
+
+<p>In the case of the screenshot above, we will call our page Testing, naming it&rsquo;s node all lowercase. As you can see, as we&rsquo;re
+at the root of the content, the <code>/content</code> location, as we created previously our template to be available for this
+path as well, it appears in the list of templates to be selected.<br />
+After we created it and try to find the node of the Page within the CRX Repository, we will be able to notice that all
+the properties defined in the template are also copied to the node of the page that was just created.</p>
+
+<p><img src="/posts/sling_url_resolve/page_properties.png" alt="Page properties" /></p>
+
+<h3 id="resolver-order">Resolver order</h3>
+
+<p>As commented before, there is some aspects of the URL that influence directly in the script resolver, and, to be true,
+there is an order of preference that the resolver takes in consideration when trying to find the best match for the
+resource content.<br />
+In our component, we can, for example, have more than one <strong>.jsp</strong> script, so, by doing so, we will let our resolver be
+able to find the best match along a wide variety of options.</p>
+
+<p>So, in the first step for this, we should create some new <strong>.jsp</strong> files within our previously created component, so we
+can then check for ourselves in practice what is the resolver order that AEM will take.<br />
+We need to create some <strong>files</strong> in the following folder <code>/apps/blog1/components/page/slingtest</code>. Use as example the
+<code>slingtest.jsp</code> that was created automatically when we created the component in the first place. We will click two times
+in each file so we can change the content of the file to it&rsquo;s name. So for example, if we created the file <code>test.jsp</code>,
+in it&rsquo;s contents it would have <code>test.jsp</code> as well.</p>
+
+<p>For this new part we should create this list of files.</p>
+
+<ul>
+<li>GET.jsp</li>
+<li>selector2.jsp</li>
+<li>selector1.jsp</li>
+<li>selector1/selector2.jsp</li>
+</ul>
+
+<p>Don&rsquo;t forget to edit the contents of each file in order to it have as the content it&rsquo;s name. Take a look in the screenshoot
+below.</p>
+
+<p><img src="/posts/sling_url_resolve/jsp_files.png" alt="JSP Files" /></p>
+
+<h4 id="testing-our-execution-order">Testing our execution order</h4>
+
+<p>Now that we&rsquo;ve created all the JSP files, the page and everything else, we can finally test in practice, when we access
+the URL of our page, which indeed will be the scripted that will be rendered.<br />
+So, let&rsquo;s try to access the page that we just created <code>http://localhost:4502/content/testing.html</code>.</p>
+
+<p>What was the page that rendered for you? Perhaps you&rsquo;re wondering why any of the page that we&rsquo;ve created was called and
+yes, the script that was created by default when the component was created at the first time, the <code>slingtest.jsp</code>.</p>
+
+<p>The reason behind that is the execution order, as there wasn&rsquo;t any specific file that match our URL, one of the last files
+that the resolver tries to look for before triggering an error, is the jsp with the same name of the component, in this case
+<strong>slingtest</strong>. If we deleted this file, there is just one more fallback before triggering an error, which is the
+<strong>[HTTP_METHOD_NAME].jsp</strong>. In our case <code>GET.jsp</code>.<br />
+If you try to delete the <strong>slingtest.jsp</strong> file, you will be able to see that the file that now will be called to render
+the content of the resource will be the <code>GET.jsp</code>. Please, do so.</p>
+
+<p>And if we deleted the <code>GET.jsp</code> as well, what would happen? In fact, there isn&rsquo;t any apparent error, we would just see
+a blank screen. But now you know, that if anytime you experience just a blank screen, can be a problem of your script resolver
+not finding anything to render.</p>
+
+<h5 id="using-the-selectors">Using the selectors</h5>
+
+<p>One good key point of AEM and Sling, is the possibility to tweak our request by adding selectors in our URL. Those selectors
+have a priority when the script resolver is trying to find the script.<br />
+For example, if we just had one selector in our URL, like this: <code>http://localhost:4502/testing.selector2.html</code>, the
+script that would be called instead would be the <code>selector2.jsp</code>.</p>
+
+<p>And if we had more than one selector, like this URL: <code>http://localhost:4502/testing.selector1.selector2.html</code>. What
+would happen?<br />
+Remember that we&rsquo;ve created a jsp within a folder? In the execution order, if there is a folder with the name of the <strong>first</strong>
+(and only the first) selector, it will enter in this folder. So you&rsquo;re right if you guessed that the one that would be called
+was <code>selector1/selector2.jsp</code>. You might be wondering that if we didn&rsquo;t had this folder, what would be the priority
+of render, the selector1 or selector2? Let&rsquo;s try to delete the selector1 folder and discover.</p>
+
+<p>If you guessed selector1, you were right, the first selector will always have the priority.</p>
+
+<h2 id="summing-it-up">Summing it up</h2>
+
+<p>Basically, that was the things that I&rsquo;ve wanted to bring up for everyone, I really wish you could make usage of anything.<br />
+If there is anything that I can help you out, please feel free to contact me via mail or any other social network! You can
+find my contacts in the footer of this blog.</p>
+
+<p>This is my first post, so sorry for any mistakes and please, warn me if there is anything that you think I could improve.<br />
+Expect to see a lot of new content coming up, as I hope to use this also as a new way to learn, trying to write and explain
+what I&rsquo;ve been studying.</p>
+
+<p>Thanks for holding up till here. ;)</p>
+
+      </article>
+
+      <ul class="pager blog-pager">
+        
+        
+      </ul>
+
+      
+      <div class="disqus-comments">
+        <div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'quental';
+    var disqus_identifier = 'http:\/\/quent.al\/post\/sling_url_resolve\/';
+    var disqus_title = 'Sling URL Resolve';
+    var disqus_url = 'http:\/\/quent.al\/post\/sling_url_resolve\/';
+
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+      </div>
+      
+
+    </div>
+  </div>
+</div>
+
+      
+
+    </div>
+
+    <footer>
+  <div class="container beautiful-jekyll-footer">
+    <div class="row">
+      <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+        <ul class="list-inline text-center footer-links">
+          
+          <li>
+            <a href="https://www.facebook.com/gquental" title="Facebook">
+              <span class="fa-stack fa-lg">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+              </span>
+            </a>
+          </li>
+          
+          
+          <li>
+            <a href="https://github.com/gquental" title="GitHub">
+              <span class="fa-stack fa-lg">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+              </span>
+            </a>
+          </li>
+          
+		      
+		      
+          <li>
+            <a href="mailto:guilherme@quent.al" title="Email me">
+              <span class="fa-stack fa-lg">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-envelope fa-stack-1x fa-inverse"></i>
+              </span>
+            </a>
+          </li>
+          
+		      
+	    	  
+          
+          
+
+    		  <li>
+      			<a href="http://quent.al/index.xml" title="RSS">
+      			  <span class="fa-stack fa-lg">
+        				<i class="fa fa-circle fa-stack-2x"></i>
+        				<i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+      			  </span>
+      			</a>
+    		  </li>		
+
+        </ul>
+        <p class="copyright text-muted">
+    		  Guilherme Quental
+    		  &nbsp;&bull;&nbsp;
+    		  2016
+    		  
+    		  
+    		  &nbsp;&bull;&nbsp;
+    		  <a href="http://quent.al/">Quent.al</a>
+    		  
+  	    </p>
+  	        
+    		<p class="theme-by text-muted">
+    		  Theme by
+    		  <a href="http://deanattali.com/beautiful-jekyll/">beautiful-jekyll</a>
+    		</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="http://quent.al/js/jquery-1.11.2.min.js"></script>
+<script src="http://quent.al/js/bootstrap.min.js"></script>
+<script src="http://quent.al/js/main.js"></script>
+
+
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-76744640-1', 'auto');
+ga('send', 'pageview');
+</script>
+
+
+  </body>
+</html>
